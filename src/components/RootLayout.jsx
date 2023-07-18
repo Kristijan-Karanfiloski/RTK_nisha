@@ -5,7 +5,7 @@ const RootLayout = () => {
 	return (
 		<>
 			<NavBar />
-			<main>
+			<main style={{ border: "2px solid red" }}>
 				<Outlet />
 			</main>
 		</>
