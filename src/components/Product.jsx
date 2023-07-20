@@ -1,20 +1,34 @@
-import { useState, useEffect } from "react";
-import { Button, Card } from "react-bootstrap";
+import { useEffect } from "react";
+import { Button, Card, Alert } from "react-bootstrap";
 //THE REDUX IMPORTS
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { add } from "../store/cartSlice";
+import { getProducts } from "../store/productSlice";
+import StatusCode from "../utils/StatusCode";
 
 const Product = () => {
-	const [products, getProducts] = useState([]);
+	////////////////////////////////////////////////////////////////
 	const dispatch = useDispatch();
+	const { data: products, status } = useSelector((state) => state.products);
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	useEffect(() => {
-		fetch("https://fakestoreapi.com/products")
-			.then((response) => response.json())
-			.then((result) => getProducts(result));
-	}, []);
+		//dispatch an action for fetch products API
+		dispatch(getProducts());
+	}, [dispatch]);
+
+	if (status === StatusCode.LOADING) {
+		return <p>Loading...</p>;
+	}
+
+	if (status === StatusCode.ERROR) {
+		return (
+			<Alert key="danger" variant="danger">
+				Something went wrong!!!
+			</Alert>
+		);
+	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -27,7 +41,7 @@ const Product = () => {
 
 	const cards = products.map((product) => (
 		<div className="col-md-3" style={{ marginBottom: "1rem" }} key={product.id}>
-			<Card className="h-100">
+			<Card className="h-100" style={{ paddingTop: ".5rem" }}>
 				<div className="text-center">
 					<Card.Img
 						className="img-fluid"
